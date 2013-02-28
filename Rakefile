@@ -1,10 +1,18 @@
-require "bundler"
-Bundler.setup
+require 'rubygems'
+require 'bundler'
+Bundler.setup :default, :test, :development
 
-gemspec = eval(File.read("core-data-parser.gemspec"))
+Bundler::GemHelper.install_tasks
 
-task :build => "#{gemspec.full_name}.gem"
-
-file "#{gemspec.full_name}.gem" => gemspec.files + ["core-data-parser.gemspec"] do
-  system "gem build core-data-parser.gemspec"
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = 'spec/**/*_spec.rb'
 end
+
+RSpec::Core::RakeTask.new(:rcov) do |spec|
+  spec.pattern = 'spec/**/*_spec.rb'
+  spec.rcov = true
+end
+
+task :spec
+task :default => :spec
